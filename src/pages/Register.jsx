@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../config/api';
 
 function Register() {
   const navigate = useNavigate();
@@ -26,7 +27,7 @@ function Register() {
     
     try {
       // First, register the user
-      const res = await fetch("http://localhost:3000/register", {
+      const res = await fetch(`${API_BASE_URL}/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -42,7 +43,7 @@ function Register() {
         if (data.role === "worker") {
           try {
             
-            const taskRes = await fetch("http://localhost:3000/create-user-task", {
+            const taskRes = await fetch(`${API_BASE_URL}/create-user-task`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",

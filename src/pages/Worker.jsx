@@ -7,6 +7,7 @@ import Map2 from '../components/Map2';
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { API_BASE_URL } from '../config/api';
 
 export default function Worker() {
   const [showMap, setShowMap] = useState(false);
@@ -55,7 +56,7 @@ export default function Worker() {
   const fetchUserTasks = async () => {
     
     try {
-      const response = await fetch(`http://localhost:3000/get-grouped-tasks/${user.id}`, {
+      const response = await fetch(`${API_BASE_URL}/get-grouped-tasks/${user.id}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"
@@ -78,7 +79,7 @@ export default function Worker() {
   const alterTaskStatus = async (wid,tid) => {
     // console.log("Altering task status for worker", wid, "and task", tid);
       try {
-        const response = await fetch(`http://localhost:3000/alter-user-task/${wid}/${tid}`, {
+        const response = await fetch(`${API_BASE_URL}/alter-user-task/${wid}/${tid}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json"

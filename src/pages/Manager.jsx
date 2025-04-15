@@ -9,6 +9,7 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Form from "../components/Form";
+import { API_BASE_URL } from '../config/api';
 
 export default function Manager() {
   const [showMap, setShowMap] = useState(false);
@@ -112,7 +113,7 @@ export default function Manager() {
     };
 
     try {
-      const response = await fetch(`http://localhost:3000/add-user-task/${selectedWorker._id}`, {
+      const response = await fetch(`${API_BASE_URL}/add-user-task/${selectedWorker._id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -146,7 +147,7 @@ export default function Manager() {
     }
 
     try {
-      const res = await fetch("http://localhost:3000/gpt", {
+      const res = await fetch(`${API_BASE_URL}/gpt`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -187,7 +188,7 @@ export default function Manager() {
         }
       };
 
-      const response = await fetch(`http://localhost:3000/add-user-task/${targetWorker._id}`, {
+      const response = await fetch(`${API_BASE_URL}/add-user-task/${targetWorker._id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -210,7 +211,7 @@ export default function Manager() {
 
   const fetchUserTasks = async () => {
     try {
-      const response = await fetch("http://localhost:3000/get-user-task", {
+      const response = await fetch(`${API_BASE_URL}/get-user-task`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"
