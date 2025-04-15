@@ -3,7 +3,7 @@ import { FaPlus, FaMapMarkerAlt } from "react-icons/fa";
 import { TiTick } from "react-icons/ti";
 import { CgRadioCheck } from "react-icons/cg";
 import Header from '../components/Header';
-import Map from '../components/Map';
+import Map2 from '../components/Map2';
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -13,7 +13,8 @@ export default function Worker() {
   const [inLocation, setInLocation] = useState(true);
   const { user } = useAuth();
   const navigate = useNavigate();
-  
+  const[mLoc,setMLoc] = useState({lat:0,long:0});
+
   // Check if user is logged in and is a worker
   useEffect(() => {
     if (!user) {
@@ -27,29 +28,28 @@ export default function Worker() {
   
   const [taskGroups, setTaskGroups] = useState([]);
 
-  // const taskGroups = [
-  //   { 
-  //     name: "John Center", 
-  //     tasks: [
-  //       { name: "Clip Grass", status: false },
-  //       { name: "Inspect Wiring", status: false },
-  //       { name: "Clean Windows", status: false },
-  //       { name: "Replace Bulb", status: true }
-  //     ] 
-  //   },
-  //   { 
-  //     name: "Fenwick Library", 
-  //     tasks: [
-  //       { name: "Fold Laundry", status: true },
-  //       { name: "Check Inventory", status: false },
-  //       { name: "Wash Floors", status: false },
-  //       { name: "Test Generators", status: false }
-  //     ] 
-  //   },
-  // ];
 
-  const handleLocationClick = () => {
+//avg location from group
+  const handleLocationClick = (taskgroup) => {
+    // console.log(tg);
     setShowMap(true);
+    setMLoc((prev)=>(
+      {...prev,
+      lat:taskgroup.avgloc.lat,
+      long:taskgroup.avgloc.long,
+      name:taskgroup.name}
+    ));
+  };
+
+  const handleTaskLocationClick = (task) => {
+    // console.log(task);
+    setShowMap(true);
+    setMLoc((prev)=>(
+      {...prev,
+      lat:task.loc.lat,
+      long:task.loc.long,
+      name:task.name}
+    ));
   };
 
   const fetchUserTasks = async () => {
@@ -68,7 +68,7 @@ export default function Worker() {
       
       const data = await response.json();
       setTaskGroups(data);
-      console.log(data);
+      // console.log(data);
     } catch (error) {
       console.error("Error fetching user tasks", error);
       toast.error("Failed to fetch worker data");
@@ -76,7 +76,7 @@ export default function Worker() {
   };
 
   const alterTaskStatus = async (wid,tid) => {
-    console.log("Altering task status for worker", wid, "and task", tid);
+    // console.log("Altering task status for worker", wid, "and task", tid);
       try {
         const response = await fetch(`http://localhost:3000/alter-user-task/${wid}/${tid}`, {
           method: "PUT",
@@ -88,7 +88,7 @@ export default function Worker() {
         const data = await response.json();
         fetchUserTasks();
         toast.success("Task status updated");
-        console.log("Task status updated", data);
+        // console.log("Task status updated", data);
       } catch (error) {
         console.error("Error updating task status", error);
         toast.error("Failed to update task status");
@@ -118,20 +118,17 @@ export default function Worker() {
               </span>
                 {/* Map Button */}
                 <button 
-                  onClick={handleLocationClick}
+                  onClick={()=>{handleLocationClick(group)}}
                   className="text-yellow-500/70 hover:text-green-400/70 transition-colors duration-300"
                 >
                   <FaMapMarkerAlt className="text-lg" />
                 </button>
-                <button className="opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out
-                                text-yellow-500/70 hover:text-green-400/70">
-                  
-                </button>
+                
               </div>
             </div>
             {/* Tasks List */}
             <div className="space-y-3 mb-4">
-              {group.tasks.map((task, index) => (
+              {group.tasks.map((task, index) => ( 
                 <div 
                   key={index} 
                   className="flex items-center justify-between p-2 rounded-lg transition-all duration-500 ease-in-out
@@ -147,6 +144,15 @@ export default function Worker() {
                       {task.name}
                     </span>
                   </div>
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleTaskLocationClick(task);
+                    }}
+                    className="text-red-500/70 hover:text-green-400/70 transition-colors duration-300"
+                  >
+                    <FaMapMarkerAlt className="text-lg" />
+                  </button>
                 </div>
               ))}
             </div>
@@ -158,7 +164,7 @@ export default function Worker() {
       {showMap && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-zinc-800 p-6 rounded-lg border border-yellow-500 shadow-xl w-full max-w-4xl">
-            <Map setShowMap={setShowMap} />
+            <Map2 aloc={mLoc} setShowMap={setShowMap} />
           </div>
         </div>
       )}

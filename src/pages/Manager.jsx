@@ -3,7 +3,7 @@ import { FaPlus, FaMapMarkerAlt } from "react-icons/fa";
 import { TiTick } from "react-icons/ti";
 import { CgRadioCheck,CgRadioChecked } from "react-icons/cg";
 import Header from '../components/Header';
-import Map from '../components/Map';
+import Map2 from '../components/Map2';
 import { useEffect } from 'react';
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from 'react-router-dom';
@@ -15,6 +15,8 @@ export default function Manager() {
   const [workerData, setWorkerData] = useState([]);
   const [selectedWorker, setSelectedWorker] = useState(null);
   const [genTaskWorker, setGenTaskWorker] = useState(null);
+  const[mLoc,setMLoc] = useState({lat:0,long:0});
+
   const [temp, setTemp] = useState({
     name: "null",
     building: "null",
@@ -36,8 +38,13 @@ export default function Manager() {
   
 
   const handleLocationClick = (task) => {
-    setSelectedTask(task);
     setShowMap(true);
+    setMLoc((prev)=>(
+      {...prev,
+      lat:task.location.lat,
+      long:task.location.long,
+      name:task.name}
+    ));
   };
 
   // Function to handle Add Task button click
@@ -222,24 +229,6 @@ export default function Manager() {
     }
   };
 
-  // const alterStatus = async (wid, tid) => {
-  //   try {
-  //     const response = await fetch(`http://localhost:3000/alter-user-task/${wid}/${tid}`, {
-  //       method: "PUT",
-  //       headers: {
-  //         "Content-Type": "application/json"
-  //       }
-  //     });
-
-  //     const data = await response.json();
-  //     fetchUserTasks();
-  //     toast.success("Task status updated");
-  //     console.log("Task status updated", data);
-  //   } catch (error) {
-  //     console.error("Error updating task status", error);
-  //     toast.error("Failed to update task status");
-  //   }
-  // };
 
   useEffect(() => {
     fetchUserTasks();
@@ -336,7 +325,7 @@ export default function Manager() {
               
              
             </div>
-            <Map setShowMap={setShowMap} />
+            <Map2 aloc={mLoc} setShowMap={setShowMap} />
           </div>
         </div>
       )}

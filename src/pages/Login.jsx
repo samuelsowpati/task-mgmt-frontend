@@ -33,7 +33,7 @@ function Login() {
       });
 
       const userData = await res.json();
-      console.log("Login response", userData);
+      // console.log("Login response", userData);
       
       if (res.ok) {
         // Store user data in context
@@ -90,6 +90,13 @@ function Login() {
             className="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-amber-500"
           >
             Login
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate("/register")}
+            className="mt-4 w-full bg-amber-800 hover:bg-amber-900 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-amber-500"
+          >
+            Register New Account !
           </button>
         </form>
         
