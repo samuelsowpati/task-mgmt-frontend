@@ -8,11 +8,14 @@ import { AuthProvider } from "./context/AuthContext";
 import Manager from "./pages/Manager";
 import Worker from "./pages/Worker";
 import Map from "./components/Map";
+import Home from "./pages/Home";
+
 function App() {
   return (
     <AuthProvider>
       <Router>
         <Routes>
+          <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/manager" element={<Manager />} />
