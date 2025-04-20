@@ -150,6 +150,8 @@ export default function Worker() {
 
       const R = 6371; // Radius of the Earth in kilometers
 
+      console.log("Task Group location",group.avgloc);
+
       const dLat = (group.avgloc.lat - currLoc.lat) * (Math.PI / 180);
       const dLon = (group.avgloc.long - currLoc.long) * (Math.PI / 180);
 
@@ -161,10 +163,16 @@ export default function Worker() {
       const distance = R * c; // Distance in kilometers
 
       // Store result in cache
-      const result = distance <= 0.0001;
-      // console.log("Saved Location",savedLoc);
+
+      //Distance in meters
+      console.log("Distance",distance*1000);
+
+      //true if distance less than 20 meters  
+      const result = distance <= 0.0002;
+
       savedLoc.current[group.name] = result;
-      
+
+      console.log("Result",result);
       return result;
     }
   
