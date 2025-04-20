@@ -145,12 +145,10 @@ export default function Worker() {
       }
       
       // If not calculated yet, do the calculation
-      // console.log("Current Location",currLoc);
-      // console.log("Group Location", group.avgloc);
-
       const R = 6371; // Radius of the Earth in kilometers
 
-      console.log("Task Group location",group.avgloc);
+      console.log("Task Group location", group.avgloc);
+      console.log("Current location", currLoc);
 
       const dLat = (group.avgloc.lat - currLoc.lat) * (Math.PI / 180);
       const dLon = (group.avgloc.long - currLoc.long) * (Math.PI / 180);
@@ -162,17 +160,17 @@ export default function Worker() {
       const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
       const distance = R * c; // Distance in kilometers
 
-      // Store result in cache
+      // Distance in meters
+      const meterDistance = distance * 1000;
+      console.log("Distance in meters:", meterDistance);
 
-      //Distance in meters
-      console.log("Distance",distance*1000);
-
-      //true if distance less than 20 meters  
-      const result = distance <= 0.0002;
+      // True if distance is less than 20 meters
+      const result = meterDistance <= 20;
+      
+      console.log("Is in location:", result);
 
       savedLoc.current[group.name] = result;
-
-      console.log("Result",result);
+      
       return result;
     }
   
