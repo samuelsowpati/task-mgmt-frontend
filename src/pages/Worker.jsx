@@ -79,6 +79,7 @@ export default function Worker() {
   };
 
   const alterTaskStatus = async (wid,tid) => {
+
     // console.log("Altering task status for worker", wid, "and task", tid);
       try {
         const response = await fetch(`${API_BASE_URL}/alter-user-task/${wid}/${tid}`, {
@@ -115,8 +116,8 @@ export default function Worker() {
             long:position.coords.longitude}
           ));
             
-          console.log(`latitude is: ${position.coords.latitude} 
-          and longitude is: ${position.coords.longitude}`);
+          // console.log(`latitude is: ${position.coords.latitude} 
+          // and longitude is: ${position.coords.longitude}`);
         },
   
         // 2nd argument
@@ -145,10 +146,10 @@ export default function Worker() {
       }
       
       // If not calculated yet, do the calculation
-      const R = 6371; // Radius of the Earth in kilometers
+      const R = 6371; 
 
-      console.log("Task Group location", group.avgloc);
-      console.log("Current location", currLoc);
+      // console.log("Task Group location", group.avgloc);
+      // console.log("Current location", currLoc);
 
       const dLat = (group.avgloc.lat - currLoc.lat) * (Math.PI / 180);
       const dLon = (group.avgloc.long - currLoc.long) * (Math.PI / 180);
@@ -162,12 +163,12 @@ export default function Worker() {
 
       // Distance in meters
       const meterDistance = distance * 1000;
-      console.log("Distance in meters:", meterDistance);
+      // console.log("Distance in meters:", meterDistance);
 
       // True if distance is less than 20 meters
       const result = meterDistance <= 20;
       
-      console.log("Is in location:", result);
+      // console.log("Is in location:", result);
 
       savedLoc.current[group.name] = result;
       
@@ -185,6 +186,7 @@ export default function Worker() {
       <Header>Worker Dashboard</Header>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
         {
+
         taskGroups.map((group, index) => (
           <div
             key={index}
@@ -216,16 +218,34 @@ export default function Worker() {
                   className="flex items-center justify-between p-2 rounded-lg transition-all duration-500 ease-in-out
                            hover:bg-zinc-600/50 hover:shadow-sm
                            group cursor-pointer"
+
+                  onClick={() => {
+                    //if inLocation is true then alterTaskStatus else show toast  
+                      
+                      if(inLocation(group))
+                        alterTaskStatus(user.id, task.taskId)
+                      else{
+                        
+                        toast.error(`You are not in ${group.name}`);
+                      }
+
+                    } }
                 >
+
+
+
+
                   <div className="flex items-center gap-2">
                     {task.status ? 
                       <TiTick className="text-green-500" /> : 
                       <CgRadioCheck className="text-white" />
                     }
-                    <span onClick={() => alterTaskStatus(user.id, task.taskId)} className={task.status ? 'line-through text-gray-500' : ''}>
+
+                    <span className={task.status ? 'line-through text-gray-500' : ''}>
                       {task.name}
                     </span>
                   </div>
+
                   <button 
                     onClick={(e) => {
                       e.stopPropagation();
@@ -235,6 +255,8 @@ export default function Worker() {
                   >
                     <FaMapMarkerAlt className="text-lg" />
                   </button>
+
+
                 </div>
               ))}
             </div>
