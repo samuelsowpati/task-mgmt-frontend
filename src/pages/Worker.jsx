@@ -104,8 +104,8 @@ export default function Worker() {
   }, []);
 
   useEffect(() => {
-
-    function currentLoc() {
+    
+  function currentLoc() {
       
       navigator.geolocation.getCurrentPosition(
         // 1st argument
@@ -116,8 +116,8 @@ export default function Worker() {
             long:position.coords.longitude}
           ));
             
-          // console.log(`latitude is: ${position.coords.latitude} 
-          // and longitude is: ${position.coords.longitude}`);
+          console.log(`latitude is: ${position.coords.latitude} 
+          and longitude is: ${position.coords.longitude}`);
         },
   
         // 2nd argument
@@ -132,11 +132,16 @@ export default function Worker() {
         }
       );
     }
-
-    
+    //initial fetch
     currentLoc();
-  }
-  , []);
+
+    const interval = setInterval(() => {
+      currentLoc();
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, []);
+
 
     function inLocation(group) {
       // Check if we already calculated this group's location status
