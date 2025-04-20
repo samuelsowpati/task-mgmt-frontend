@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { FaPlus, FaMapMarkerAlt } from "react-icons/fa";
 import { TiTick } from "react-icons/ti";
 import { CgRadioCheck } from "react-icons/cg";
@@ -11,11 +11,13 @@ import { API_BASE_URL } from '../config/api';
 
 export default function Worker() {
   const [showMap, setShowMap] = useState(false);
-  const [inLocation, setInLocation] = useState(true);
+  // const [inLocation, setInLocation] = useState(true);
   const { user } = useAuth();
   const navigate = useNavigate();
   const[mLoc,setMLoc] = useState({lat:0,long:0});
+  const savedLoc = useRef({});
 
+  const [currLoc,setCurrLoc] = useState({lat:0,long:0});
   // Check if user is logged in and is a worker
   useEffect(() => {
     if (!user) {
@@ -86,7 +88,7 @@ export default function Worker() {
           }
         });
   
-        const data = await response.json();
+        // const data = await response.json();
         fetchUserTasks();
         toast.success("Task status updated");
         // console.log("Task status updated", data);
@@ -100,11 +102,84 @@ export default function Worker() {
     fetchUserTasks();
   }, []);
 
+  useEffect(() => {
+
+    function currentLoc() {
+      
+      navigator.geolocation.getCurrentPosition(
+        // 1st argument
+        (position) => {
+          setCurrLoc((prev)=>(
+            {...prev,
+            lat:position.coords.latitude,
+            long:position.coords.longitude}
+          ));
+            
+          console.log(`latitude is: ${position.coords.latitude} 
+          and longitude is: ${position.coords.longitude}`);
+        },
+  
+        // 2nd argument
+        (error) => {
+          console.error("Error fetching current location:", error);
+        },
+  
+        // 3rd Argument
+        {
+          enableHighAccuracy: true,
+          maximumAge: 100,
+        }
+      );
+    }
+
+    
+    currentLoc();
+  }
+  , []);
+
+    function inLocation(group) {
+      // Check if we already calculated this group's location status
+      
+      if (savedLoc.current[group.name] !== undefined) {
+        return savedLoc.current[group.name];
+      }
+      
+      // If not calculated yet, do the calculation
+      // console.log("Current Location",currLoc);
+      // console.log("Group Location", group.avgloc);
+
+      const R = 6371; // Radius of the Earth in kilometers
+
+      const dLat = (group.avgloc.lat - currLoc.lat) * (Math.PI / 180);
+      const dLon = (group.avgloc.long - currLoc.long) * (Math.PI / 180);
+
+      const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(currLoc.lat * (Math.PI / 180)) * Math.cos(group.avgloc.lat * (Math.PI / 180)) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      const distance = R * c; // Distance in kilometers
+
+      // Store result in cache
+      const result = distance <= 0.0001;
+      // console.log("Saved Location",savedLoc);
+      savedLoc.current[group.name] = result;
+      
+      return result;
+    }
+  
+  // Reset location cache when current location changes
+  useEffect(() => {
+    // Clear cache when current location updates
+    savedLoc.current = {};
+  }, [currLoc]);
+
   return (
     <div className="text-white font-s min-h-screen bg-zinc-800 p-4">
       <Header>Worker Dashboard</Header>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-        {taskGroups.map((group, index) => (
+        {
+        taskGroups.map((group, index) => (
           <div
             key={index}
             className="bg-zinc-700 border border-yellow-500/30 rounded-lg p-4 text-white shadow-md transition-all duration-500 ease-in-out 
@@ -114,8 +189,8 @@ export default function Worker() {
               <h2 className="text-xl font-semibold text-yellow-300">{group.name}</h2>
               <div className="flex items-center gap-2">
 
-              <span className={`${inLocation ? 'text-green-500' : 'text-red-500'} font-bold`}>
-                      {inLocation ? 'In Location' : 'Not In Location'}
+              <span className={`${inLocation(group) ? 'text-green-500' : 'text-red-500'} font-bold`}>
+                      { inLocation(group) ? 'In Location' : 'Not In Location'}
               </span>
                 {/* Map Button */}
                 <button 
