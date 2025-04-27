@@ -117,8 +117,8 @@ export default function Worker() {
             long:position.coords.longitude}
           ));
             
-          console.log(`latitude is: ${position.coords.latitude} 
-          and longitude is: ${position.coords.longitude}`);
+          // console.log(`latitude is: ${position.coords.latitude} 
+          // and longitude is: ${position.coords.longitude}`);
         },
   
         // 2nd argument
