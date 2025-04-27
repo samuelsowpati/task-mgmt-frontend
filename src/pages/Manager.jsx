@@ -75,8 +75,8 @@ export default function Manager() {
           }
         }));
           
-        console.log(`latitude is: ${position.coords.latitude} 
-        and longitude is: ${position.coords.longitude}`);
+        // console.log(`latitude is: ${position.coords.latitude} 
+        // and longitude is: ${position.coords.longitude}`);
       },
 
       // 2nd argument
@@ -130,7 +130,7 @@ export default function Manager() {
       setSelectedWorker(null);
 
       toast.success("Task added successfully");
-      console.log("Added task details", data);
+      // console.log("Added task details", data);
     } catch (error) {
       console.error("Task could not be created", error);
       toast.error("Failed to add task");
@@ -147,11 +147,20 @@ export default function Manager() {
     }
 
     try {
+      // Format past tasks to be more useful for OpenAI
+      const formattedTasks = targetWorker.tasks.map(task => 
+        `"${task.name}"`
+      ).join(", ");
+      
       const res = await fetch(`${API_BASE_URL}/gpt`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
+        body: JSON.stringify({
+          pastTasks: formattedTasks,
+          workerName: targetWorker.workerName
+        })
       });
   
       const taskName = await res.text(); 
@@ -231,6 +240,8 @@ export default function Manager() {
   };
 
 
+
+
   useEffect(() => {
     fetchUserTasks();
   }, []);
@@ -239,7 +250,7 @@ export default function Manager() {
   return (
     <div className="text-white font-s min-h-screen bg-zinc-800 p-4">
       <Header>Manager Dashboard</Header>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
         {workerData.map((worker, index) => (
           <div
@@ -305,7 +316,7 @@ export default function Manager() {
             <div className="flex space-x-4 items-center">
               <button 
                 onClick={() => handleAddTaskClick(worker)} 
-                className="mx-4 gap-2 flex items-center text-blue-400"
+                className="cursor-pointer mx-4 gap-2 flex items-center text-blue-400"
               >
                 <FaPlus /> Add Task
               </button>

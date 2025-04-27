@@ -10,7 +10,8 @@ function Register() {
   const [data, setData] = useState({
     username: "",
     password: "",
-    role: "worker"
+    role: "worker",
+    phone: ""
   });
 
   // Function to update state on input change
@@ -109,6 +110,19 @@ function Register() {
               placeholder="Create a password"
               required
             />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-white mb-2">Phone</label>
+            <input
+              type="text"
+              value={data.phone}
+              onChange={(e) => handleChange("phone", e.target.value)}
+              className="w-full px-3 py-2 bg-gray-700 text-white rounded focus:outline-none focus:ring-2 focus:ring-amber-500"
+              placeholder="Enter your phone number"
+              required
+            />
+              
           </div>
           
           <div className="mb-6">

@@ -11,11 +11,12 @@ import { API_BASE_URL } from '../config/api';
 
 export default function Worker() {
   const [showMap, setShowMap] = useState(false);
-  // const [inLocation, setInLocation] = useState(true);
   const { user } = useAuth();
   const navigate = useNavigate();
   const[mLoc,setMLoc] = useState({lat:0,long:0});
   const savedLoc = useRef({});
+  const [notifs,setNotifs] = useState(false);
+  
 
   const [currLoc,setCurrLoc] = useState({lat:0,long:0});
   // Check if user is logged in and is a worker
@@ -137,7 +138,7 @@ export default function Worker() {
 
     const interval = setInterval(() => {
       currentLoc();
-    }, 10000);
+    }, 8000);
 
     return () => clearInterval(interval);
   }, []);
@@ -173,10 +174,18 @@ export default function Worker() {
       // True if distance is less than 20 meters
       const result = meterDistance <= 20;
       
-      // console.log("Is in location:", result);
+      // Log the group when location is within range
+      if (result === true) {
+        console.log('Worker is within location range for group:', group);
+      }
 
       savedLoc.current[group.name] = result;
-      
+      if(result == true && notifs) {
+        console.log("Sending text to",user.phone,"for group",group.name);
+
+        sendText(user.phone,group.name);
+      }
+
       return result;
     }
   
@@ -186,9 +195,49 @@ export default function Worker() {
     savedLoc.current = {};
   }, [currLoc]);
 
+  
+  async function sendText(user_phone,loc_name) {
+    try {
+      
+      const name = user.username.charAt(0).toUpperCase() + user.username.slice(1);
+     
+      const response = await fetch(`${API_BASE_URL}/send-text`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name:  name,
+          phone: user_phone,
+          location: loc_name
+        })
+      });
+      
+      const data = await response.json();
+      console.log(data);
+      
+      if (data.success) {
+        toast.success('Message sent successfully!');
+      } else {
+        toast.error(`Failed to send message: ${data.error || 'Unknown error'}`);
+      }
+    } catch (error) {
+      console.error('Error sending text:', error);
+      toast.error('Failed to send text message');
+    }
+  }
   return (
     <div className="text-white font-s min-h-screen bg-zinc-800 p-4">
       <Header>Worker Dashboard</Header>
+      
+      <div className="mt-4">
+        <label className="flex items-center cursor-pointer">
+          <input type="checkbox" className="sr-only peer" checked={notifs} onChange={()=>setNotifs(!notifs)}/>
+          <div className="relative w-11 h-6 bg-gray-500 peer-checked:bg-blue-600 rounded-full peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+          <span className="ml-3 text-sm font-medium text-white">Notifs </span>
+        </label>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
         {
 
