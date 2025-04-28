@@ -170,9 +170,9 @@ export default function Worker() {
       // Distance in meters
       const meterDistance = distance * 1000;
       // console.log("Distance in meters for :", group.name, ":", meterDistance);
-      // toast.info(`Distance in meters for ${group.name}: ${meterDistance.toFixed(2)}`);
-      // True if distance is less than 10 meters
-      const result = meterDistance <= 10;
+      toast.info(`Distance in meters for ${group.name}: ${meterDistance.toFixed(2)}`);
+      // True if distance is less than 8 meters
+      const result = meterDistance <= 8;
       
       // Log the group when location is within range
       if (result === true) {
