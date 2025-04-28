@@ -170,7 +170,7 @@ export default function Worker() {
       // Distance in meters
       const meterDistance = distance * 1000;
       // console.log("Distance in meters for :", group.name, ":", meterDistance);
-      toast.info(`Distance in meters for ${group.name}: ${meterDistance.toFixed(2)}`);
+      // toast.info(`Distance in meters for ${group.name}: ${meterDistance.toFixed(2)}`);
       // True if distance is less than 5 meters
       const result = meterDistance <= 2;
       
