@@ -171,8 +171,8 @@ export default function Worker() {
       const meterDistance = distance * 1000;
       // console.log("Distance in meters:", meterDistance);
 
-      // True if distance is less than 5 meters
-      const result = meterDistance <= 5;
+      // True if distance is less than 8 meters
+      const result = meterDistance <= 8;
       
       // Log the group when location is within range
       if (result === true) {
