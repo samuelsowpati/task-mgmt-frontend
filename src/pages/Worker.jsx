@@ -138,7 +138,7 @@ export default function Worker() {
 
     const interval = setInterval(() => {
       currentLoc();
-    }, 8000);
+    }, 5000);
 
     return () => clearInterval(interval);
   }, []);
@@ -171,8 +171,8 @@ export default function Worker() {
       const meterDistance = distance * 1000;
       // console.log("Distance in meters:", meterDistance);
 
-      // True if distance is less than 20 meters
-      const result = meterDistance <= 20;
+      // True if distance is less than 5 meters
+      const result = meterDistance <= 5;
       
       // Log the group when location is within range
       if (result === true) {
