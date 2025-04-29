@@ -191,7 +191,7 @@ export default function Manager() {
         name: taskName,
         status: false,
         location: {
-          building: "JC",
+          building: "Nguyen 1103",
           lat: location.lat,
           long: location.long
         }
